@@ -56,3 +56,24 @@ Crear una **base de datos para almacenar las asignaciones de créditos** realiza
 >Nota importante: La API puede recibir altos niveles de tráfico en las pruebas de estrés que le realicemos (más de 1,000 transacciones por segundo).
 
 >Crear las pruebas unitarias y de integración con cobertura superior al 90%.
+
+
+
+
+
+
+# Instruciones para ejecucion de API
+
+Estando en el folder `/investment_api`
+
+Ejecutar en una terminal:
+- `make`
+- `make run`
+
+
+Si no tiene soporte para make:
+
+- `go run main.go`
+
+
+Si desea eliminar el historial guardado en SQLite, eliminar el file `gorm.db` que se genera
