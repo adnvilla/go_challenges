@@ -50,6 +50,7 @@ func combinationsWithGoroutines(primes []int, target int, currentComb []int, fin
 			c <- x
 		}
 		if findOnce && *count > 0 {
+			close(c)
 			return // Si ya se encontró una combinación válida, terminar la verificación de combinaciones
 		}
 	}

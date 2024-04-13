@@ -40,17 +40,59 @@ func TestInvestment(t *testing.T) {
 		tarjet        int
 		findExpected  bool
 		expectedCombi []int
+		findOnce      bool
 	}{
-		{30, true, []int{3, 3, 5, 5, 7, 7}},
-		{67, true, []int{3, 3, 3, 3, 3, 3, 3, 5, 5, 5, 5, 5, 7, 7, 7}},
-		{4, false, []int{}},
+		{30, true, []int{3, 3, 5, 5, 7, 7}, false},
+		{30, true, []int{3, 3, 3, 3, 3, 3, 5, 7}, true},
+		{67, true, []int{3, 3, 3, 3, 3, 3, 3, 5, 5, 5, 5, 5, 7, 7, 7}, false},
+		{4, false, []int{}, false},
 	}
 
 	primes := []int{3, 5, 7}
 	initComb := []int{3, 5, 7}
 
 	for _, inv := range investment {
-		_, combis := FindCombinations(primes, inv.tarjet, initComb, false)
+		_, combis := FindCombinations(primes, inv.tarjet, initComb, inv.findOnce)
+
+		find := false
+		for i := 0; i < len(combis); i++ {
+			currentComb := combis[i]
+			slices.Sort(currentComb)
+			if testEq(inv.expectedCombi, currentComb) {
+				find = true
+				break
+			}
+		}
+
+		if !find && inv.findExpected {
+			t.Errorf("The case tarjet %v dont find the expected combi %v", inv.tarjet, inv.expectedCombi)
+		}
+
+		if find && !inv.findExpected {
+			t.Errorf("The case tarjet %v find the expected combi %v", inv.tarjet, inv.expectedCombi)
+		}
+	}
+}
+
+func TestInvestmentWithGoroutines(t *testing.T) {
+
+	investment := []struct {
+		tarjet        int
+		findExpected  bool
+		expectedCombi []int
+		findOnce      bool
+	}{
+		{30, true, []int{3, 3, 5, 5, 7, 7}, false},
+		{30, true, []int{3, 3, 3, 3, 3, 3, 5, 7}, true},
+		{67, true, []int{3, 3, 3, 3, 3, 3, 3, 5, 5, 5, 5, 5, 7, 7, 7}, false},
+		{4, false, []int{}, false},
+	}
+
+	primes := []int{3, 5, 7}
+	initComb := []int{3, 5, 7}
+
+	for _, inv := range investment {
+		_, combis := FindCombinationsWithGoroutines(primes, inv.tarjet, initComb, inv.findOnce)
 
 		find := false
 		for i := 0; i < len(combis); i++ {
