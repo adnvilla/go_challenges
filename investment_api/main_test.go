@@ -3,6 +3,8 @@ package main
 import (
 	"slices"
 	"testing"
+
+	"github.com/adnvilla/go_challenges/investment_api/algorithm"
 )
 
 func TestInvestment(t *testing.T) {
@@ -21,7 +23,7 @@ func TestInvestment(t *testing.T) {
 	initComb := []int{3, 5, 7}
 
 	for _, inv := range investment {
-		_, combis := findCombinations(primes, inv.tarjet, initComb, false)
+		_, combis := algorithm.FindCombinations(primes, inv.tarjet, initComb, false)
 
 		find := false
 		for i := 0; i < len(combis); i++ {
