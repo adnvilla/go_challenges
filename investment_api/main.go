@@ -13,6 +13,6 @@ type CreditAssigner interface {
 type CreditAssignment struct {
 }
 
-func (*CreditAssignment) Assig(investment int32) (x300 int32, x500 int32, x700 int32, err error) {
+func (*CreditAssignment) Assign(investment int32) (x300 int32, x500 int32, x700 int32, err error) {
 	return
 }
