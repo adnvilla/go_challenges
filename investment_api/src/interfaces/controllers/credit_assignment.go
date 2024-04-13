@@ -7,6 +7,7 @@ import (
 
 	usecases "github.com/adnvilla/go_challenges/investment_api/src/application/use_cases"
 	"github.com/adnvilla/go_challenges/investment_api/src/domain/service"
+	"github.com/adnvilla/go_challenges/investment_api/src/infrastructure"
 	"github.com/adnvilla/go_challenges/investment_api/src/interfaces/dto"
 	errorshandle "github.com/adnvilla/go_challenges/investment_api/src/pkg/errors_handle"
 	"github.com/gin-gonic/gin"
@@ -14,7 +15,7 @@ import (
 
 func CreateCreditAssignment(c *gin.Context) {
 	// This can be moved to dispatcher
-	usecase := usecases.NewCreateCreditAssignmentUseCase(service.NewCreditAssignmentService())
+	usecase := usecases.NewCreateCreditAssignmentUseCase(service.NewCreditAssignmentService(), infrastructure.NewCreditAssignmentRepository())
 
 	// get dl body
 	var dlBody dto.CreditAssignmentRequest

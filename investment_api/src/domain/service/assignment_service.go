@@ -32,12 +32,10 @@ func (*CreditAssignment) Assign(investment int32) (x300 int32, x500 int32, x700 
 			case 7:
 				x700++
 			default:
-				return 0, 0, 0, errors.New("Error: can not assignment the investment")
+				return 0, 0, 0, errors.New("error: can not assignment the investment")
 			}
-
 		}
 		return
 	}
-
-	return 0, 0, 0, errors.New("Error: can not assignment the investment")
+	return 0, 0, 0, errors.New("error: can not assignment the investment")
 }

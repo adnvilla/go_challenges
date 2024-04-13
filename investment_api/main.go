@@ -1,6 +1,10 @@
 package main
 
 import (
+	"errors"
+	"log"
+	"net/http"
+
 	"github.com/adnvilla/go_challenges/investment_api/src/interfaces/controllers"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -12,11 +16,23 @@ func main() {
 
 	router := gin.Default()
 
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
 	router.Use(cors.Default())
 
-	router.POST("/credit-assignment", controllers.CreateCreditAssignment)
+	api := router.Group("/api")
+	api.POST("/credit-assignment", controllers.CreateCreditAssignment)
 
-	// By default it serves on :8080 unless a
-	// PORT environment variable was defined.
-	router.Run()
+	// This can be GET
+	api.POST("/statistics", controllers.GetStatistics)
+
+	server := &http.Server{
+		Addr:    "localhost:8080",
+		Handler: router,
+	}
+	// Run gin routing
+	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		log.Println("server failed on ListenAndServe")
+		log.Println(err)
+	}
 }
