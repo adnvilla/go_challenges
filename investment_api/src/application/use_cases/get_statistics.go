@@ -8,7 +8,11 @@ import (
 	"github.com/adnvilla/go_challenges/investment_api/src/pkg/use_case"
 )
 
-type GetStatisticsUseCase struct {
+type GetStatisticsUseCase interface {
+	Handle(ctx context.Context, input GetStatisticsInput) (GetStatisticsOutput, error)
+}
+
+type getStatisticsUseCase struct {
 	repository repository.CreditAssignmentRepository
 }
 
@@ -20,12 +24,12 @@ type GetStatisticsOutput struct {
 }
 
 func NewGetStatisticsUseCase(r repository.CreditAssignmentRepository) use_case.UseCase[GetStatisticsInput, GetStatisticsOutput] {
-	u := new(GetStatisticsUseCase)
+	u := new(getStatisticsUseCase)
 	u.repository = r
 	return u
 }
 
-func (u *GetStatisticsUseCase) Handle(ctx context.Context, input GetStatisticsInput) (GetStatisticsOutput, error) {
+func (u *getStatisticsUseCase) Handle(ctx context.Context, input GetStatisticsInput) (GetStatisticsOutput, error) {
 	statistics, err := u.repository.GetStatistics()
 	if err != nil {
 		return GetStatisticsOutput{}, err

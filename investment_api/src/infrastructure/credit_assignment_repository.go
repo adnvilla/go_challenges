@@ -5,30 +5,25 @@ import (
 
 	domain "github.com/adnvilla/go_challenges/investment_api/src/domain/entity"
 	"github.com/adnvilla/go_challenges/investment_api/src/domain/repository"
-	"github.com/adnvilla/go_challenges/investment_api/src/pkg/gorm"
+	"github.com/adnvilla/go_challenges/investment_api/src/infrastructure/models"
+	"gorm.io/gorm"
 )
 
-type Statistic struct {
-	Success    bool `gorm:"column:success"`
-	Investment int  `gorm:"column:investment"`
-}
-
 type creditAssignmentRepository struct {
-	tableName string
+	db *gorm.DB
 }
 
-func NewCreditAssignmentRepository() repository.CreditAssignmentRepository {
-	return &creditAssignmentRepository{}
+func NewCreditAssignmentRepository(db *gorm.DB) repository.CreditAssignmentRepository {
+	return &creditAssignmentRepository{
+		db: db,
+	}
 }
 
 func (r *creditAssignmentRepository) SaveStatistics(s domain.Statistic) error {
-	db := gorm.GetConnection()
-
-	statistic := Statistic{
+	statistic := models.Statistic{
 		Success:    s.Success,
 		Investment: s.Investment}
-	result := db.Create(&statistic)
-	// SELECT * FROM statistics;
+	result := r.db.Create(&statistic)
 	if result.Error != nil {
 		return errors.New("have a issue with consult DB")
 	}
@@ -36,11 +31,9 @@ func (r *creditAssignmentRepository) SaveStatistics(s domain.Statistic) error {
 	return nil
 }
 func (r *creditAssignmentRepository) GetStatistics() ([]domain.Statistic, error) {
-	db := gorm.GetConnection()
-
 	st := []domain.Statistic{}
-	statistics := []Statistic{}
-	result := db.Find(&statistics)
+	statistics := []models.Statistic{}
+	result := r.db.Find(&statistics)
 	// SELECT * FROM statistics;
 	if result.Error != nil {
 		return st, errors.New("have a issue with consult DB")

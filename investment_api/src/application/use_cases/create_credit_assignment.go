@@ -10,7 +10,11 @@ import (
 	"github.com/adnvilla/go_challenges/investment_api/src/pkg/use_case"
 )
 
-type CreateCreditAssignmentUseCase struct {
+type CreateCreditAssignmentUseCase interface {
+	Handle(ctx context.Context, input CreateCreditAssignmentInput) (CreateCreditAssignmentOutput, error)
+}
+
+type createCreditAssignmentUseCase struct {
 	service    service.CreditAssigner
 	repository repository.CreditAssignmentRepository
 }
@@ -24,13 +28,13 @@ type CreateCreditAssignmentOutput struct {
 }
 
 func NewCreateCreditAssignmentUseCase(s service.CreditAssigner, r repository.CreditAssignmentRepository) use_case.UseCase[CreateCreditAssignmentInput, CreateCreditAssignmentOutput] {
-	u := new(CreateCreditAssignmentUseCase)
+	u := new(createCreditAssignmentUseCase)
 	u.service = s
 	u.repository = r
 	return u
 }
 
-func (u *CreateCreditAssignmentUseCase) Handle(ctx context.Context, input CreateCreditAssignmentInput) (CreateCreditAssignmentOutput, error) {
+func (u *createCreditAssignmentUseCase) Handle(ctx context.Context, input CreateCreditAssignmentInput) (CreateCreditAssignmentOutput, error) {
 	x300, x500, x700, err := u.service.Assign(int32(input.Investment))
 
 	if err != nil {

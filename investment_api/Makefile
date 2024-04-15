@@ -7,3 +7,9 @@ build:
 
 run:
 	./bin/investment_api
+
+test:
+	go test ./... -cover
+
+mock_gen:	
+	mockery

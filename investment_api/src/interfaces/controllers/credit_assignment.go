@@ -6,20 +6,25 @@ import (
 	"net/http"
 
 	usecases "github.com/adnvilla/go_challenges/investment_api/src/application/use_cases"
-	"github.com/adnvilla/go_challenges/investment_api/src/domain/service"
-	"github.com/adnvilla/go_challenges/investment_api/src/infrastructure"
 	"github.com/adnvilla/go_challenges/investment_api/src/interfaces/dto"
 	errorshandle "github.com/adnvilla/go_challenges/investment_api/src/pkg/errors_handle"
+	"github.com/adnvilla/go_challenges/investment_api/src/pkg/use_case"
 	"github.com/gin-gonic/gin"
 )
 
-func CreateCreditAssignment(c *gin.Context) {
-	// This can be moved to dispatcher
-	usecase := usecases.NewCreateCreditAssignmentUseCase(service.NewCreditAssignmentService(), infrastructure.NewCreditAssignmentRepository())
+type CreditAssigmentHandler struct {
+	usecase use_case.UseCase[usecases.CreateCreditAssignmentInput, usecases.CreateCreditAssignmentOutput]
+}
 
-	// get dl body
-	var dlBody dto.CreditAssignmentRequest
-	err := c.ShouldBindJSON(&dlBody)
+func NewCreateCreditAssignmentHandler(usecase use_case.UseCase[usecases.CreateCreditAssignmentInput, usecases.CreateCreditAssignmentOutput]) CreditAssigmentHandler {
+	return CreditAssigmentHandler{
+		usecase: usecase,
+	}
+}
+
+func (handler *CreditAssigmentHandler) CreateCreditAssignment(c *gin.Context) {
+	var body dto.CreditAssignmentRequest
+	err := c.ShouldBindJSON(&body)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, errorshandle.ErrorCustomize{
 			Error: fmt.Sprint(errors.New("please check the request")),
@@ -28,10 +33,10 @@ func CreateCreditAssignment(c *gin.Context) {
 	}
 
 	input := usecases.CreateCreditAssignmentInput{
-		Investment: dlBody.Investment,
+		Investment: body.Investment,
 	}
 
-	result, err := usecase.Handle(c, input)
+	result, err := handler.usecase.Handle(c, input)
 
 	if err != nil {
 		// Errs it will be customize with handle errors
@@ -41,5 +46,5 @@ func CreateCreditAssignment(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, result)
+	c.JSON(http.StatusOK, result.CreditAssignmentResponse)
 }

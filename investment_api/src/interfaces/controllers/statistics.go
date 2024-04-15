@@ -5,17 +5,24 @@ import (
 	"net/http"
 
 	usecases "github.com/adnvilla/go_challenges/investment_api/src/application/use_cases"
-	"github.com/adnvilla/go_challenges/investment_api/src/infrastructure"
 	errorshandle "github.com/adnvilla/go_challenges/investment_api/src/pkg/errors_handle"
+	"github.com/adnvilla/go_challenges/investment_api/src/pkg/use_case"
 	"github.com/gin-gonic/gin"
 )
 
-func GetStatistics(c *gin.Context) {
-	// This can be moved to dispatcher
-	usecase := usecases.NewGetStatisticsUseCase(infrastructure.NewCreditAssignmentRepository())
+type StatisticsHandler struct {
+	usecase use_case.UseCase[usecases.GetStatisticsInput, usecases.GetStatisticsOutput]
+}
 
+func NewStatisticsHandlerHandler(usecase use_case.UseCase[usecases.GetStatisticsInput, usecases.GetStatisticsOutput]) StatisticsHandler {
+	return StatisticsHandler{
+		usecase: usecase,
+	}
+}
+
+func (handler *StatisticsHandler) GetStatistics(c *gin.Context) {
 	input := usecases.GetStatisticsInput{}
-	result, err := usecase.Handle(c, input)
+	result, err := handler.usecase.Handle(c, input)
 
 	if err != nil {
 		// Errs it will be customize with handle errors
